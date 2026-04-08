@@ -1,0 +1,2024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Adam Lappin — Business Analytics</title>
+
+  <!-- Google Fonts: Merriweather for headings, Lato for body -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Merriweather:wght@400;700;900&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg:          #FAF7F2;
+      --bg-alt:      #F3EDE3;
+      --card-bg:     #FFFFFF;
+      --accent:      #C9A84C;
+      --accent-dark: #A8872E;
+      --text:        #2C2C2C;
+      --text-sec:    #6B6B6B;
+      --border:      #E5DDD0;
+      --shadow:      0 4px 24px rgba(44, 44, 44, 0.08);
+      --shadow-hover:0 8px 36px rgba(44, 44, 44, 0.14);
+      --radius:      10px;
+      --nav-h:       68px;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      font-family: 'Lato', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    img { max-width: 100%; display: block; }
+    a   { color: inherit; text-decoration: none; }
+
+    /* ============================================================
+       UTILITY
+    ============================================================ */
+    .container {
+      width: 90%;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-pad {
+      padding: 100px 0;
+    }
+
+    .section-alt {
+      background-color: var(--bg-alt);
+    }
+
+    /* Section heading with gold underline */
+    .section-heading {
+      font-family: 'Merriweather', serif;
+      font-size: clamp(1.8rem, 4vw, 2.4rem);
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 1rem;
+      display: inline-block;
+      position: relative;
+    }
+
+    .section-heading::after {
+      content: '';
+      display: block;
+      width: 50px;
+      height: 3px;
+      background: var(--accent);
+      margin-top: 10px;
+      border-radius: 2px;
+    }
+
+    .heading-wrap {
+      margin-bottom: 3rem;
+    }
+
+    .subheading {
+      font-size: 1.05rem;
+      color: var(--text-sec);
+      margin-top: 0.5rem;
+    }
+
+    /* Fade-up animation class (added by JS via IntersectionObserver) */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ============================================================
+       NAVBAR
+    ============================================================ */
+    #navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--nav-h);
+      z-index: 1000;
+      background: rgba(250, 247, 242, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-inner {
+      width: 90%;
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-brand {
+      font-family: 'Merriweather', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.02em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-sec);
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent);
+    }
+
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+      background: none;
+      border: none;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+
+    /* Hamburger open state */
+    .hamburger.open span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+    .hamburger.open span:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger.open span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+
+    /* Mobile nav drawer */
+    .nav-drawer {
+      display: none;
+      position: fixed;
+      top: var(--nav-h);
+      left: 0;
+      right: 0;
+      background: rgba(250, 247, 242, 0.97);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 1.5rem 0;
+      z-index: 999;
+    }
+
+    .nav-drawer.open {
+      display: block;
+    }
+
+    .nav-drawer ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .nav-drawer a {
+      font-size: 0.95rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-sec);
+      transition: color 0.2s;
+    }
+
+    .nav-drawer a:hover {
+      color: var(--accent);
+    }
+
+    /* ============================================================
+       HERO
+    ============================================================ */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: var(--nav-h);
+      background: linear-gradient(135deg, #FAF7F2 0%, #F3EDE3 45%, #EDE3D0 100%);
+      overflow: hidden;
+    }
+
+    .hero-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 3rem;
+      width: 100%;
+    }
+
+    .hero-text {
+      flex: 1;
+      opacity: 0;
+      animation: heroFadeIn 1s ease 0.2s forwards;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    .hero-name {
+      font-family: 'Merriweather', serif;
+      font-size: clamp(2.8rem, 7vw, 5rem);
+      font-weight: 900;
+      line-height: 1.1;
+      color: var(--text);
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1rem, 2.2vw, 1.2rem);
+      color: var(--text-sec);
+      font-weight: 300;
+      max-width: 480px;
+      margin-bottom: 2.5rem;
+      line-height: 1.6;
+    }
+
+    .hero-cta-group {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 1.75rem;
+      border-radius: 6px;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.15s;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border: 2px solid var(--accent);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-dark);
+      border-color: var(--accent-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(201, 168, 76, 0.35);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 2px solid var(--border);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    /* Headshot placeholder */
+    .hero-photo {
+      flex: 0 0 340px;
+      max-width: 340px;
+      opacity: 0;
+      animation: heroFadeIn 1s ease 0.5s forwards;
+    }
+
+    .headshot-placeholder {
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      background: linear-gradient(160deg, #EDE3D0, #DDD0B8);
+      border-radius: 16px;
+      border: 2px dashed var(--accent);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      color: var(--text-sec);
+    }
+
+    .headshot-placeholder svg {
+      width: 56px;
+      height: 56px;
+      opacity: 0.45;
+    }
+
+    .headshot-placeholder p {
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      opacity: 0.5;
+      text-align: center;
+      padding: 0 1rem;
+    }
+
+    /* Hero scroll indicator */
+    .scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      opacity: 0.4;
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    .scroll-hint span {
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .scroll-arrow {
+      width: 20px;
+      height: 20px;
+      border-right: 2px solid var(--text);
+      border-bottom: 2px solid var(--text);
+      transform: rotate(45deg);
+    }
+
+    @keyframes heroFadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50%       { transform: translateX(-50%) translateY(6px); }
+    }
+
+    /* ============================================================
+       ABOUT ME
+    ============================================================ */
+    #about .about-body {
+      max-width: 780px;
+    }
+
+    .about-pro p {
+      font-size: 1.05rem;
+      line-height: 1.85;
+      color: var(--text);
+    }
+
+    .divider {
+      width: 60px;
+      height: 1px;
+      background: var(--border);
+      margin: 2.5rem 0;
+    }
+
+    /* Interest cards */
+    .interest-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .interest-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      transition: box-shadow 0.25s, border-color 0.25s, transform 0.25s;
+    }
+
+    .interest-card:hover {
+      border-color: var(--accent);
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-4px);
+    }
+
+    .interest-card-photo {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      background: linear-gradient(160deg, #EDE3D0, #DDD0B8);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      color: var(--text-sec);
+      overflow: hidden;
+    }
+
+    .interest-card-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .interest-card-photo svg {
+      width: 36px;
+      height: 36px;
+      opacity: 0.35;
+    }
+
+    .interest-card-photo span {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.4;
+    }
+
+    .interest-card-body {
+      padding: 1.4rem 1.5rem 1.6rem;
+    }
+
+    .interest-card-title {
+      font-family: 'Merriweather', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.6rem;
+    }
+
+    .interest-card-text {
+      font-size: 0.93rem;
+      line-height: 1.75;
+      color: var(--text-sec);
+    }
+
+    @media (max-width: 768px) {
+      .interest-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ============================================================
+       EVOLUTION — REDESIGNED
+    ============================================================ */
+    #evolution {
+      background: var(--bg);
+    }
+
+    .evo-subhead {
+      font-size: 1.1rem;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.01em;
+    }
+
+    .evo-intro-text {
+      max-width: 760px;
+      font-size: 1.05rem;
+      color: var(--text-sec);
+      line-height: 1.85;
+      margin-bottom: 4rem;
+    }
+
+    /* Subsection wrapper */
+    .evo-subsection {
+      position: relative;
+      padding: 3rem 0 3rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .evo-subsection:last-of-type {
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Large faded background number */
+    .evo-bg-num {
+      position: absolute;
+      top: 1.5rem;
+      right: 0;
+      font-family: 'Merriweather', serif;
+      font-size: clamp(5rem, 12vw, 9rem);
+      font-weight: 900;
+      color: var(--accent);
+      opacity: 0.07;
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    /* Subsection heading */
+    .evo-sub-heading {
+      font-family: 'Merriweather', serif;
+      font-size: clamp(1.2rem, 3vw, 1.55rem);
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.6rem;
+      display: inline-block;
+      position: relative;
+    }
+
+    .evo-sub-heading::after {
+      content: '';
+      display: block;
+      width: 36px;
+      height: 3px;
+      background: var(--accent);
+      margin-top: 8px;
+      border-radius: 2px;
+    }
+
+    .evo-sub-body {
+      font-size: 1rem;
+      line-height: 1.85;
+      color: var(--text);
+      max-width: 800px;
+      margin: 1.5rem 0 2rem;
+    }
+
+    /* Graph pair */
+    .graph-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .graph-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .graph-img-wrap {
+      width: 100%;
+      height: 350px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      background-color: #ffffff;
+    }
+
+    .graph-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      display: block;
+    }
+
+    /* Graph placeholder (shown when image missing) */
+    .graph-placeholder {
+      width: 100%;
+      aspect-ratio: 4/3;
+      background: linear-gradient(160deg, #EDE3D0, #DDD0B8);
+      border-radius: var(--radius);
+      border: 2px dashed var(--accent);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      color: var(--text-sec);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      opacity: 0.6;
+    }
+
+    .graph-caption {
+      font-size: 0.82rem;
+      color: var(--text-sec);
+      text-align: center;
+      font-style: italic;
+      line-height: 1.5;
+    }
+
+    /* Gold callout box */
+    .gold-callout {
+      background: linear-gradient(135deg, #FBF4E3, #F5E8C0);
+      border: 1px solid #DDB945;
+      border-left: 4px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 1.1rem 1.5rem;
+      font-size: 0.98rem;
+      font-style: italic;
+      color: #5C4209;
+      line-height: 1.7;
+      margin-top: 1rem;
+    }
+
+    .gold-callout strong {
+      font-style: normal;
+      color: #3D2C06;
+    }
+
+    /* ---- Venn Diagram ---- */
+    .venn-wrap {
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      gap: 0;
+      margin: 2rem 0;
+      min-height: 280px;
+      position: relative;
+    }
+
+    .venn-circle {
+      flex: 1;
+      max-width: 280px;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 2rem 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .venn-left {
+      background: rgba(237, 227, 208, 0.85);
+      border: 2px solid #D4C4A0;
+      border-radius: 50% 0 0 50%;
+      align-items: flex-start;
+      padding-left: 2rem;
+      padding-right: 1rem;
+      margin-right: -2.5rem;
+    }
+
+    .venn-center {
+      background: rgba(201, 168, 76, 0.18);
+      border-top: 2px solid rgba(201,168,76,0.5);
+      border-bottom: 2px solid rgba(201,168,76,0.5);
+      z-index: 2;
+      flex: 0 0 160px;
+      max-width: 160px;
+      padding: 1.5rem 0.75rem;
+      align-items: center;
+    }
+
+    .venn-right {
+      background: rgba(250, 247, 242, 0.85);
+      border: 2px solid #D4C4A0;
+      border-radius: 0 50% 50% 0;
+      align-items: flex-end;
+      padding-right: 2rem;
+      padding-left: 1rem;
+      margin-left: -2.5rem;
+    }
+
+    .venn-label {
+      font-family: 'Merriweather', serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text);
+      text-align: center;
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+    }
+
+    .venn-center .venn-label {
+      color: #7A5C10;
+    }
+
+    .venn-item {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-sec);
+      background: rgba(255,255,255,0.6);
+      border-radius: 20px;
+      padding: 0.2rem 0.65rem;
+      border: 1px solid rgba(0,0,0,0.08);
+      white-space: nowrap;
+    }
+
+    .venn-center .venn-item {
+      background: rgba(201,168,76,0.2);
+      border-color: rgba(201,168,76,0.5);
+      color: #7A5C10;
+    }
+
+    /* Speech bubbles */
+    .quotes-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin: 2rem 0;
+      max-width: 820px;
+    }
+
+    .speech-bubble {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      box-shadow: var(--shadow);
+      font-size: 0.97rem;
+      font-style: italic;
+      color: var(--text);
+      line-height: 1.75;
+      position: relative;
+      max-width: 680px;
+    }
+
+    .speech-bubble::before {
+      content: '\201C';
+      font-family: 'Merriweather', serif;
+      font-size: 3rem;
+      color: var(--accent);
+      opacity: 0.3;
+      position: absolute;
+      top: -0.25rem;
+      left: 0.9rem;
+      line-height: 1;
+    }
+
+    .speech-bubble.right {
+      align-self: flex-end;
+      border-left: 1px solid var(--border);
+      border-right: 4px solid var(--accent);
+    }
+
+    /* Score chips (reused from old design) */
+    .stat-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin: 1.25rem 0;
+    }
+
+    .stat-chip {
+      background: linear-gradient(135deg, #FBF4E3, #F5E8C0);
+      border: 1px solid #E5C96A;
+      border-radius: 6px;
+      padding: 0.45rem 1rem;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #7A5C10;
+      letter-spacing: 0.02em;
+    }
+
+    /* Closing paragraph */
+    .evo-closing-new {
+      margin-top: 3.5rem;
+      text-align: center;
+      max-width: 820px;
+      margin-left: auto;
+      margin-right: auto;
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: var(--text-sec);
+      font-style: italic;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .graph-pair {
+        grid-template-columns: 1fr;
+      }
+
+      .venn-wrap {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+        min-height: auto;
+      }
+
+      .venn-left, .venn-right, .venn-center {
+        border-radius: 12px;
+        border: 2px solid var(--border);
+        max-width: 100%;
+        flex: none;
+        width: 100%;
+        padding: 1.25rem 1.5rem;
+        margin: 0;
+        align-items: flex-start;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+      }
+
+      .venn-center {
+        background: rgba(201, 168, 76, 0.15);
+        border-color: rgba(201,168,76,0.5);
+      }
+
+      .speech-bubble.right {
+        align-self: flex-start;
+      }
+
+      .evo-bg-num {
+        display: none;
+      }
+    }
+
+    /* ============================================================
+       PORTFOLIO
+    ============================================================ */
+    #portfolio .portfolio-intro {
+      font-size: 1.05rem;
+      color: var(--text-sec);
+      margin-bottom: 2.75rem;
+      max-width: 680px;
+    }
+
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.75rem;
+    }
+
+    .portfolio-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      transition: box-shadow 0.25s, transform 0.25s, border-color 0.25s;
+    }
+
+    .portfolio-card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-4px);
+      border-color: var(--accent);
+    }
+
+    .card-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .card-title {
+      font-family: 'Merriweather', serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    .card-desc {
+      font-size: 0.93rem;
+      color: var(--text-sec);
+      line-height: 1.7;
+      flex: 1;
+    }
+
+    .btn-card {
+      align-self: flex-start;
+      background: transparent;
+      border: 2px solid var(--accent);
+      color: var(--accent);
+      padding: 0.55rem 1.25rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      transition: background 0.2s, color 0.2s;
+      cursor: pointer;
+    }
+
+    .btn-card:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    /* Coming Soon badge */
+    .card-coming-soon {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: linear-gradient(135deg, #FBF4E3, #F5E8C0);
+      border: 1px solid #DDB945;
+      color: #7A5C10;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.28rem 0.75rem;
+      border-radius: 20px;
+    }
+
+    .portfolio-card { position: relative; }
+
+    /* Multi-button card row */
+    .card-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+
+    /* ============================================================
+       PROFESSIONAL PERSONA
+    ============================================================ */
+    #persona .persona-sub {
+      font-size: 1.05rem;
+      color: var(--text-sec);
+      margin-top: 0.25rem;
+      margin-bottom: 2.75rem;
+    }
+
+    .video-wrap {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-hover);
+    }
+
+    .video-ratio {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%; /* 16:9 */
+      height: 0;
+    }
+
+    .video-ratio iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    /* ============================================================
+       RESUME
+    ============================================================ */
+    #resume {
+      text-align: center;
+    }
+
+    #resume .heading-wrap {
+      text-align: left;
+    }
+
+    .resume-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.75rem;
+    }
+
+    .resume-body p {
+      font-size: 1.05rem;
+      color: var(--text-sec);
+      max-width: 520px;
+      text-align: center;
+    }
+
+    .resume-iframe-wrap {
+      width: 100%;
+      max-width: 900px;
+    }
+
+    .resume-iframe-wrap iframe {
+      width: 100%;
+      height: 750px;
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      .resume-iframe-wrap iframe {
+        height: 500px;
+      }
+    }
+
+    .btn-resume {
+      display: inline-block;
+      padding: 0.9rem 2.5rem;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      border: 2px solid var(--accent);
+      transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+    }
+
+    .btn-resume:hover {
+      background: var(--accent-dark);
+      border-color: var(--accent-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 22px rgba(201, 168, 76, 0.38);
+    }
+
+    .btn-resume-outline {
+      background: transparent;
+      color: var(--accent);
+    }
+
+    .btn-resume-outline:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    /* ============================================================
+       CONTACT
+    ============================================================ */
+    #contact .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+
+    .contact-form-wrap h3 {
+      font-family: 'Merriweather', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+    }
+
+    /* TO ACTIVATE: sign up at formspree.io and replace the form action URL below */
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .form-group label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--text-sec);
+    }
+
+    .form-group input,
+    .form-group textarea {
+      font-family: 'Lato', sans-serif;
+      font-size: 1rem;
+      color: var(--text);
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+      resize: vertical;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.15);
+    }
+
+    .form-group textarea {
+      min-height: 130px;
+    }
+
+    .btn-submit {
+      align-self: flex-start;
+      padding: 0.8rem 2rem;
+      background: var(--accent);
+      color: #fff;
+      border: 2px solid var(--accent);
+      border-radius: 6px;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+    }
+
+    .btn-submit:hover {
+      background: var(--accent-dark);
+      border-color: var(--accent-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(201, 168, 76, 0.32);
+    }
+
+    .contact-info h3 {
+      font-family: 'Merriweather', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+    }
+
+    .contact-info-block {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .contact-icon {
+      width: 42px;
+      height: 42px;
+      min-width: 42px;
+      background: linear-gradient(135deg, #FBF4E3, #F5E8C0);
+      border: 1px solid #E5C96A;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .contact-icon svg {
+      width: 20px;
+      height: 20px;
+      color: var(--accent);
+    }
+
+    .contact-item-text {
+      font-size: 0.97rem;
+      color: var(--text-sec);
+    }
+
+    .contact-item-text a {
+      color: var(--accent);
+      font-weight: 700;
+      transition: color 0.2s;
+    }
+
+    .contact-item-text a:hover {
+      color: var(--accent-dark);
+    }
+
+    .btn-linkedin {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-top: 1.75rem;
+      padding: 0.75rem 1.75rem;
+      background: #0A66C2;
+      color: #fff;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .btn-linkedin:hover {
+      background: #084e9a;
+      transform: translateY(-2px);
+    }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    footer {
+      background: var(--text);
+      color: rgba(255,255,255,0.45);
+      text-align: center;
+      padding: 2rem 1rem;
+      font-size: 0.82rem;
+      letter-spacing: 0.04em;
+    }
+
+    footer span {
+      color: var(--accent);
+    }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 900px) {
+      .hero-photo {
+        flex: 0 0 260px;
+        max-width: 260px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+
+      .hero-inner {
+        flex-direction: column-reverse;
+        text-align: center;
+        padding: 3rem 0 2rem;
+      }
+
+      .hero-text { order: 2; }
+      .hero-photo { order: 1; flex: none; max-width: 200px; width: 200px; margin: 0 auto; }
+      .hero-subtitle { margin: 0 auto 2rem; }
+      .hero-cta-group { justify-content: center; }
+
+      .portfolio-grid {
+        grid-template-columns: 1fr;
+      }
+
+      #contact .contact-grid {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
+
+      .evo-theme {
+        padding: 1.75rem 1.5rem;
+      }
+
+      .section-pad { padding: 72px 0; }
+    }
+
+    @media (max-width: 480px) {
+      .hero-name { font-size: 2.4rem; }
+      .stat-row { gap: 0.5rem; }
+      .stat-chip { font-size: 0.8rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ============================================================
+       NAVBAR
+  ============================================================ -->
+  <nav id="navbar" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-brand">Adam Lappin</a>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#evolution">Evolution</a></li>
+        <li><a href="#portfolio">Work</a></li>
+        <li><a href="#persona">Persona</a></li>
+        <li><a href="#resume">Resume</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile nav drawer -->
+  <div class="nav-drawer" id="navDrawer">
+    <ul>
+      <li><a href="#about"     class="drawer-link">About</a></li>
+      <li><a href="#evolution" class="drawer-link">Evolution</a></li>
+      <li><a href="#portfolio" class="drawer-link">Work</a></li>
+      <li><a href="#persona"   class="drawer-link">Persona</a></li>
+      <li><a href="#resume"    class="drawer-link">Resume</a></li>
+      <li><a href="#contact"   class="drawer-link">Contact</a></li>
+    </ul>
+  </div>
+
+
+  <!-- ============================================================
+       HERO
+  ============================================================ -->
+  <section id="hero">
+    <div class="container">
+      <div class="hero-inner">
+
+        <!-- LEFT: Text -->
+        <div class="hero-text">
+          <p class="hero-eyebrow">Business Analytics &amp; BI</p>
+          <h1 class="hero-name">Adam<br>Lappin</h1>
+          <p class="hero-subtitle">
+            Business Analytics @ Eller College of Management, University of Arizona
+            &nbsp;·&nbsp; Tucson, AZ
+          </p>
+          <div class="hero-cta-group">
+            <a href="#about"   class="btn btn-primary">Learn More</a>
+            <a href="#contact" class="btn btn-outline">Get In Touch</a>
+          </div>
+        </div>
+
+        <!-- HEADSHOT: loaded from files/headshot.jpg -->
+        <div class="hero-photo">
+          <img
+            src="files/headshot.jpg"
+            alt="Adam Lappin"
+            style="width:100%; border-radius:16px; object-fit:cover; aspect-ratio:3/4; display:block;"
+          />
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Scroll hint -->
+    <div class="scroll-hint" aria-hidden="true">
+      <span>Scroll</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       ABOUT ME
+  ============================================================ -->
+  <section id="about" class="section-pad section-alt">
+    <div class="container">
+      <div class="heading-wrap fade-up">
+        <h2 class="section-heading">About Me</h2>
+      </div>
+
+      <div class="about-body">
+
+        <!-- PROFESSIONAL -->
+        <div class="about-pro fade-up">
+          <p>
+            I am a junior at the Eller College of Management at the University of Arizona, pursuing
+            a degree in Business Analytics with an expected graduation in Fall 2027. My academic and
+            professional focus is working with complex datasets and turning them into clear, actionable
+            results that help organizations make better, more data-driven decisions faster. I am an
+            analytical and results-oriented individual who has always had a passion for numbers, data,
+            math, and technology. I am drawn to analytics and business intelligence roles where
+            structured thinking, collaboration, and a results-driven mindset are the norm. Whether I
+            am building a data model, structuring a business case, or coordinating a team project, I
+            bring a combination of analytical rigor and interpersonal energy that tends to move things
+            forward. Peers and colleagues consistently describe me as calm under pressure and a natural
+            leader — I am the type of person who steps up when it matters most. I thrive in
+            high-performance, team-oriented environments and am particularly excited about opportunities
+            in San Diego, where I plan to build my career. I am actively seeking internship or
+            entry-level roles in analytics, business intelligence, or data-driven consulting where I
+            can contribute immediately while continuing to grow.
+          </p>
+        </div>
+
+        <div class="divider" aria-hidden="true"></div>
+
+        <!-- PERSONAL — Interest Cards -->
+        <div class="interest-grid">
+
+          <!-- CARD 1: Golf -->
+          <div class="interest-card fade-up">
+            <div class="interest-card-photo">
+              <img src="files/golf.jpg" alt="Adam Lappin on the golf course" />
+            </div>
+            <div class="interest-card-body">
+              <h3 class="interest-card-title">On the Course</h3>
+              <p class="interest-card-text">
+                I have been playing golf ever since I was a little kid. Golf is my time to relax
+                and where I reset. Whether I'm playing a casual round with friends or competing,
+                the course is where I sharpen my focus and my patience — two things that I carry
+                directly into how I work.
+              </p>
+            </div>
+          </div>
+
+          <!-- CARD 2: Travel -->
+          <div class="interest-card fade-up">
+            <div class="interest-card-photo">
+              <img src="files/travel.jpg" alt="Exploring a tropical destination" />
+            </div>
+            <div class="interest-card-body">
+              <h3 class="interest-card-title">Always Exploring</h3>
+              <p class="interest-card-text">
+                Traveling is one of my favorite things to do. It pushes me outside my comfort zone
+                and gives me a perspective that I cannot get in the classroom. Every new place
+                teaches me something about people, culture, and the world I want to work in.
+              </p>
+            </div>
+          </div>
+
+          <!-- CARD 3: Family & Friends -->
+          <div class="interest-card fade-up">
+            <div class="interest-card-photo">
+              <img src="files/friends.jpg" alt="Family and friends" />
+            </div>
+            <div class="interest-card-body">
+              <h3 class="interest-card-title">The People Around Me</h3>
+              <p class="interest-card-text">
+                At the end of the day, the people in my life are what drive me. My friends and
+                family keep me grounded, motivated, and remind me why I'm working toward the
+                goals I have.
+              </p>
+            </div>
+          </div>
+
+        </div><!-- end .interest-grid -->
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       EVOLUTION — REDESIGNED
+  ============================================================ -->
+  <section id="evolution" class="section-pad">
+    <div class="container">
+
+      <!-- Section heading -->
+      <div class="heading-wrap fade-up">
+        <h2 class="section-heading">My Evolution</h2>
+        <p class="evo-subhead">How BCOM 314 changed the way I see myself — and how others see me.</p>
+      </div>
+
+      <!-- Intro -->
+      <p class="evo-intro-text fade-up">
+        This semester, I collected data through Radian's Self-Perception Inventory (SPI) and
+        Professional Reputation Survey (PRS) to better understand the gap between how I see myself
+        and how others experience me. What I found surprised me — and gave me a clearer picture of
+        the professional I'm becoming.
+      </p>
+
+      <!-- ====================================================
+           SUBSECTION 01 — Communication Style
+      ==================================================== -->
+      <div class="evo-subsection fade-up">
+        <span class="evo-bg-num" aria-hidden="true">01</span>
+        <h3 class="evo-sub-heading">Communication Style</h3>
+
+        <p class="evo-sub-body">
+          My Self-Perception Inventory identified my Attitudinal Communication Style as
+          <strong>Analytical</strong> — process-oriented, data-driven, and structured. My composite
+          Proactivity score was −3.0 and Reactivity score was −2.0, placing me in the lower-left
+          quadrant. I see myself as methodical and deliberate, someone who thinks carefully before
+          acting. But when my Professional Reputation Survey came back, others told a different story
+          entirely. My average Behavioral Communication Style from 4 respondents was
+          <strong>Expressive</strong> — with a Composite Proactivity of 5.0 and Reactivity of 1.0.
+          To the people around me, I show up as outgoing, assertive, and energetic. This gap was one
+          of the most eye-opening discoveries of the semester. It tells me that while I may feel
+          measured and reserved internally, I project confidence and energy externally — a genuine
+          asset in analytics and BI roles where communication and presence matter as much as
+          technical skill.
+        </p>
+
+        <!-- Graphs side by side -->
+        <div class="graph-pair">
+
+          <!-- SPI Graph -->
+          <div class="graph-item">
+            <!-- REPLACE images/spi-graph.png with your actual SPI screenshot -->
+            <div class="graph-img-wrap">
+              <img src="images/spi-graph.png" alt="SPI Graph — Analytical style"
+                   onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+            </div>
+            <div class="graph-placeholder" style="display:none;">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
+              </svg>
+              <span>Add SPI Graph</span>
+            </div>
+            <p class="graph-caption">My Self-Perception: <strong>Analytical</strong><br>(Proactivity: −3.0, Reactivity: −2.0)</p>
+          </div>
+
+          <!-- PRS Graph -->
+          <div class="graph-item">
+            <!-- REPLACE images/prs-graph.png with your actual PRS screenshot -->
+            <div class="graph-img-wrap">
+              <img src="images/prs-graph.png" alt="PRS Graph — Expressive style"
+                   onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+            </div>
+            <div class="graph-placeholder" style="display:none;">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
+              </svg>
+              <span>Add PRS Graph</span>
+            </div>
+            <p class="graph-caption">How Others See Me: <strong>Expressive</strong><br>(Proactivity: +5.0, Reactivity: +1.0)</p>
+          </div>
+
+        </div><!-- end .graph-pair -->
+
+      </div><!-- end subsection 01 -->
+
+
+      <!-- ====================================================
+           SUBSECTION 02 — Adjectives & Core Values
+      ==================================================== -->
+      <div class="evo-subsection fade-up">
+        <span class="evo-bg-num" aria-hidden="true">02</span>
+        <h3 class="evo-sub-heading">Adjectives &amp; Core Values</h3>
+
+        <p class="evo-sub-body">
+          One of the most revealing parts of this process was comparing the adjectives I chose to
+          describe myself against the words my Professional Reputation Survey respondents used. Some
+          matched — which validated how I see myself. Others were completely new to me — and those
+          were the most meaningful.
+        </p>
+
+        <!-- CSS Venn Diagram -->
+        <div class="venn-wrap" role="img" aria-label="Venn diagram comparing self-perception adjectives to peer perception adjectives">
+
+          <!-- Left circle: How I See Myself -->
+          <div class="venn-circle venn-left">
+            <p class="venn-label">How I<br>See Myself</p>
+            <span class="venn-item">Leaderlike</span>
+            <span class="venn-item">Easygoing</span>
+            <span class="venn-item">Involved</span>
+          </div>
+
+          <!-- Center: Both -->
+          <div class="venn-circle venn-center">
+            <p class="venn-label">Both</p>
+            <span class="venn-item">Competitive</span>
+            <span class="venn-item">Hard-Working</span>
+            <span class="venn-item">Social</span>
+            <span class="venn-item">Good with Numbers</span>
+          </div>
+
+          <!-- Right circle: How Others See Me -->
+          <div class="venn-circle venn-right">
+            <p class="venn-label">How Others<br>See Me</p>
+            <span class="venn-item">Calm</span>
+            <span class="venn-item">Driven</span>
+            <span class="venn-item">Empathetic</span>
+            <span class="venn-item">Even-Tempered</span>
+            <span class="venn-item">Respects Authority</span>
+          </div>
+
+        </div><!-- end .venn-wrap -->
+
+      </div><!-- end subsection 02 -->
+
+
+      <!-- ====================================================
+           SUBSECTION 03 — What I Learned
+      ==================================================== -->
+      <div class="evo-subsection fade-up">
+        <span class="evo-bg-num" aria-hidden="true">03</span>
+        <h3 class="evo-sub-heading">What I Learned</h3>
+
+        <p class="evo-sub-body">
+          The most important thing I learned this semester wasn't about data — it was about my
+          impact on the people around me. My Team 360 evaluations revealed scores I was genuinely
+          proud of:
+        </p>
+
+        <div class="stat-row">
+          <span class="stat-chip">Quality of Work: 97.2 / 100</span>
+          <span class="stat-chip">Effort: 95.2 / 100</span>
+          <span class="stat-chip">Positive Team Environment: 96.4 / 100</span>
+        </div>
+
+        <p class="evo-sub-body" style="margin-top:1.25rem;">
+          But more than the numbers, it was the words my teammates used that stuck with me. I also
+          identified two areas to keep growing: being more open to others' ideas
+          (<strong>3.8/4</strong>) and holding teammates accountable (<strong>3.8/4</strong>) —
+          both of which I'm actively working on heading into my career.
+        </p>
+
+        <!-- Speech bubble quotes -->
+        <div class="quotes-stack">
+
+          <div class="speech-bubble left">
+            "This guy is the best kind of team member to have — he can help with whatever, lead if
+            needed, and just a great support person to have."
+          </div>
+
+          <div class="speech-bubble right">
+            "Adam has great poise and keeps a level head no matter what comes his way. He has
+            leadership skills but may not know it yet."
+          </div>
+
+          <div class="speech-bubble left">
+            "Adam stepped up when we were behind. His energy brightened our group environment and
+            was really engaging."
+          </div>
+
+        </div><!-- end .quotes-stack -->
+      </div><!-- end subsection 03 -->
+
+
+      <!-- Closing paragraph -->
+      <p class="evo-closing-new fade-up">
+        "These insights don't just describe who I am today — they inform who I'm becoming. I'm
+        leaning into the leadership presence others already see in me, building on the emotional
+        steadiness that shows up in my reputation, and continuing to push myself in the areas where
+        I still have room to grow. That's the mindset I'm bringing to every analytics team I join."
+      </p>
+
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       PORTFOLIO
+  ============================================================ -->
+  <section id="portfolio" class="section-pad section-alt">
+    <div class="container">
+      <div class="heading-wrap fade-up">
+        <h2 class="section-heading">My Work</h2>
+      </div>
+
+      <p class="portfolio-intro fade-up">
+        A selection of academic and professional work samples that demonstrate my skills in
+        data analysis, written communication, and business strategy.
+      </p>
+
+      <div class="portfolio-grid">
+
+        <!-- CARD 1: AmEx Attrition -->
+        <div class="portfolio-card fade-up">
+          <span class="card-tag">Data Analysis &amp; Visualization</span>
+          <h3 class="card-title">American Express Customer Attrition Analysis</h3>
+          <p class="card-desc">
+            Built and interpreted a 15-variable regression model using 10,000+ customer records
+            to identify key drivers of credit card attrition, paired with an interactive Tableau
+            dashboard to communicate findings to a non-technical audience.
+          </p>
+          <div class="card-btn-group">
+            <a href="https://public.tableau.com/views/AnalysisofAttritionBasedoffDifferentVariables_/Finaldash?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link"
+               target="_blank" rel="noopener noreferrer" class="btn-card"
+               aria-label="View AmEx Attrition Tableau Dashboard">
+              View Dashboard
+            </a>
+            <!-- REPLACE with actual file path once PDF is added to /files folder -->
+            <a href="files/amex-attrition.pdf"
+               target="_blank" rel="noopener noreferrer" class="btn-card"
+               aria-label="View AmEx Attrition Report PDF">
+              View Report
+            </a>
+          </div>
+        </div>
+
+        <!-- CARD 2: Credit Card Default -->
+        <div class="portfolio-card fade-up">
+          <span class="card-tag">Regression Analysis</span>
+          <h3 class="card-title">Credit Card Default &amp; Limit Analysis</h3>
+          <p class="card-desc">
+            Developed two regression models for Bank of America analyzing 20,000+ Taiwanese
+            credit card customers to predict credit limits and default probability, delivering
+            actionable recommendations on customer segmentation strategy.
+          </p>
+          <!-- REPLACE with actual file path once PDF is added to /files folder -->
+          <a href="files/credit-card-analysis.pdf"
+             target="_blank" rel="noopener noreferrer" class="btn-card"
+             aria-label="View Credit Card Analysis PDF">
+            View PDF
+          </a>
+        </div>
+
+        <!-- CARD 3: Industry Research Brief -->
+        <div class="portfolio-card fade-up">
+          <span class="card-tag">Industry Research</span>
+          <h3 class="card-title">U.S. Software Publishing Industry Brief</h3>
+          <p class="card-desc">
+            Produced a professional research brief for SSG leadership analyzing the $541B U.S.
+            software publishing industry — covering revenue forecasts, competitive landscape,
+            and the impact of AI on market dynamics through 2030.
+          </p>
+          <!-- REPLACE with actual file path once PDF is added to /files folder -->
+          <a href="files/industry-research-brief.pdf"
+             target="_blank" rel="noopener noreferrer" class="btn-card"
+             aria-label="View Industry Research Brief PDF">
+            View PDF
+          </a>
+        </div>
+
+        <!-- CARD 4: Retail Store Profitability -->
+        <div class="portfolio-card fade-up">
+          <span class="card-tag">Business Intelligence</span>
+          <h3 class="card-title">Retail Store Profitability Analysis</h3>
+          <p class="card-desc">
+            Built an interactive Tableau story analyzing store-level performance data to identify
+            the most profitable retail locations, surfacing key trends across revenue, costs, and
+            margins to support strategic decision-making.
+          </p>
+          <a href="https://public.tableau.com/views/FinalAnalysisSelectingtheMostProfitableStore/Story1?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link"
+             target="_blank" rel="noopener noreferrer" class="btn-card"
+             aria-label="View Retail Store Profitability Tableau Dashboard">
+            View Dashboard
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       PROFESSIONAL PERSONA
+  ============================================================ -->
+  <section id="persona" class="section-pad section-alt">
+    <div class="container">
+      <div class="heading-wrap fade-up">
+        <h2 class="section-heading">Professional Persona</h2>
+        <p class="persona-sub">A look into who I am, how I communicate, and where I'm headed.</p>
+      </div>
+
+      <div class="video-wrap fade-up">
+        <div class="video-ratio">
+          <iframe
+            src="https://www.youtube.com/embed/ZIhS0v0oa2Y"
+            title="Adam Lappin — Professional Persona"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen>
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       RESUME
+  ============================================================ -->
+  <section id="resume" class="section-pad">
+    <div class="container">
+      <div class="heading-wrap fade-up">
+        <h2 class="section-heading">Resume</h2>
+      </div>
+
+      <div class="resume-body fade-up">
+        <p>
+          A full overview of my academic background, experience, skills, and accomplishments.
+          Scroll through below or download a copy to keep.
+        </p>
+
+        <!-- REPLACE files/resume.pdf with the path to your actual resume PDF -->
+        <div class="resume-iframe-wrap">
+          <iframe
+            src="files/resume.pdf#toolbar=0&navpanes=0&scrollbar=1"
+            title="Adam Lappin Resume">
+          </iframe>
+        </div>
+
+        <a href="files/resume.pdf" download
+           class="btn-resume btn-resume-outline" aria-label="Download Adam Lappin's resume">
+          Download Resume
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       CONTACT
+  ============================================================ -->
+  <section id="contact" class="section-pad section-alt">
+    <div class="container">
+      <div class="heading-wrap fade-up">
+        <h2 class="section-heading">Get In Touch</h2>
+        <p class="subheading">I'd love to hear from you — whether it's about a role, a project, or just a conversation.</p>
+      </div>
+
+      <div class="contact-grid">
+
+        <!-- FORM -->
+        <div class="contact-form-wrap fade-up">
+          <h3>Send a Message</h3>
+          <!-- TO ACTIVATE: sign up at formspree.io and replace the action URL below.
+               Example: <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST" ...> -->
+          <form class="contact-form" action="#" method="POST" novalidate>
+            <div class="form-group">
+              <label for="contact-name">Name</label>
+              <input type="text" id="contact-name" name="name" placeholder="Your name" required />
+            </div>
+            <div class="form-group">
+              <label for="contact-email">Email</label>
+              <input type="email" id="contact-email" name="email" placeholder="your@email.com" required />
+            </div>
+            <div class="form-group">
+              <label for="contact-message">Message</label>
+              <textarea id="contact-message" name="message" placeholder="What's on your mind?" required></textarea>
+            </div>
+            <button type="submit" class="btn-submit">Send Message</button>
+          </form>
+        </div>
+
+        <!-- INFO -->
+        <div class="contact-info fade-up">
+          <h3>Contact Info</h3>
+          <div class="contact-info-block">
+
+            <div class="contact-item">
+              <div class="contact-icon">
+                <!-- Email icon -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                     stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                  <polyline points="22,6 12,13 2,6"/>
+                </svg>
+              </div>
+              <div class="contact-item-text">
+                <!-- REPLACE with your real email address -->
+                <a href="mailto:lappinadam10@gmail.com">lappinadam10@gmail.com</a>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <div class="contact-icon">
+                <!-- Location icon -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                     stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+              </div>
+              <div class="contact-item-text">Tucson, AZ</div>
+            </div>
+
+            <div class="contact-item">
+              <div class="contact-icon">
+                <!-- School icon -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                     stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                  <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                </svg>
+              </div>
+              <div class="contact-item-text">Eller College of Management, University of Arizona</div>
+            </div>
+
+          </div>
+
+          <!-- LinkedIn button -->
+          <!-- REPLACE href="#" with your LinkedIn profile URL, e.g. href="https://www.linkedin.com/in/your-profile/" -->
+          <a href="https://www.linkedin.com/in/adam-lappin-" target="_blank" rel="noopener noreferrer" class="btn-linkedin"
+             aria-label="Visit Adam Lappin's LinkedIn profile">
+            <!-- REPLACE href="#" with your LinkedIn profile URL -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                 fill="currentColor" aria-hidden="true">
+              <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+              <rect x="2" y="9" width="4" height="12"/>
+              <circle cx="4" cy="4" r="2"/>
+            </svg>
+            Connect on LinkedIn
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer>
+    <p>&copy; <span id="year"></span> Adam Lappin &nbsp;·&nbsp; Built with <span>&#9825;</span> in Tucson, AZ</p>
+  </footer>
+
+
+  <!-- ============================================================
+       JAVASCRIPT
+       - Hamburger menu toggle
+       - Smooth scroll close on mobile
+       - Intersection Observer fade-up animations
+       - Dynamic footer year
+  ============================================================ -->
+  <script>
+    /* ---------- Footer year ---------- */
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    /* ---------- Hamburger / mobile nav ---------- */
+    const hamburger = document.getElementById('hamburger');
+    const navDrawer  = document.getElementById('navDrawer');
+
+    hamburger.addEventListener('click', () => {
+      const isOpen = navDrawer.classList.toggle('open');
+      hamburger.classList.toggle('open', isOpen);
+      hamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    });
+
+    /* Close drawer when a link is clicked */
+    document.querySelectorAll('.drawer-link').forEach(link => {
+      link.addEventListener('click', () => {
+        navDrawer.classList.remove('open');
+        hamburger.classList.remove('open');
+        hamburger.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      });
+    });
+
+    /* Close drawer on outside click */
+    document.addEventListener('click', (e) => {
+      if (
+        navDrawer.classList.contains('open') &&
+        !navDrawer.contains(e.target) &&
+        !hamburger.contains(e.target)
+      ) {
+        navDrawer.classList.remove('open');
+        hamburger.classList.remove('open');
+        hamburger.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      }
+    });
+
+    /* ---------- Intersection Observer — fade-up on scroll ---------- */
+    const fadeEls = document.querySelectorAll('.fade-up');
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry, i) => {
+          if (entry.isIntersecting) {
+            /*
+             * Stagger cards inside a grid: delay each sibling slightly.
+             * Other elements get no extra delay.
+             */
+            const parent = entry.target.parentElement;
+            let delay = 0;
+
+            if (
+              parent &&
+              (parent.classList.contains('portfolio-grid') ||
+               parent.classList.contains('evo-themes'))
+            ) {
+              const siblings = Array.from(parent.querySelectorAll('.fade-up'));
+              const idx = siblings.indexOf(entry.target);
+              delay = idx * 100; /* ms */
+            }
+
+            setTimeout(() => {
+              entry.target.classList.add('visible');
+            }, delay);
+
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        threshold: 0.12,
+        rootMargin: '0px 0px -40px 0px',
+      }
+    );
+
+    fadeEls.forEach(el => observer.observe(el));
+
+    /* ---------- Navbar scroll shadow ---------- */
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 20) {
+        navbar.style.boxShadow = '0 2px 16px rgba(44,44,44,0.1)';
+      } else {
+        navbar.style.boxShadow = 'none';
+      }
+    }, { passive: true });
+  </script>
+
+</body>
+</html>
